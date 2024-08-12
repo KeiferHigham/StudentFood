@@ -105,17 +105,17 @@ export default function Index() {
       
 <ToastContainer />
 
-<div className="container mx-auto">
-<h1 className="mt-8 mb-4 text-4xl font-extrabold tracking-tight leading-none text-center text-white md:text-4xl lg:text-4xl bg-black">
+<div className="bg-gray-800 text-white">
+<h1 className="mt-8 mb-4 text-4xl font-extrabold tracking-tight leading-none text-center text-white md:text-4xl lg:text-4xl ">
     Restaurants in Provo/Orem Offering Discounts to BYU/UVU Students
     </h1>
 
-  <p className="submission-instruction">
+  <p className="submission-instruction text-center font-extrabold mb-4">
       If you're aware of any restaurants in the area that give discounts to students not currently listed below,
         please click please <a  className="text-blue-500 underline hover:text-blue-700" onClick={handleOpenModal}>click here</a>.
       </p>
   <div className="w-full flex justify-center">
-    <table className="text-left w-full max-w-5xl">
+    <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden">
       <thead className="bg-black flex text-white w-full">
         <tr className="flex w-full">
           <th className="p-4 flex-1 text-center font-extrabold">Restaurant Name</th>
@@ -125,7 +125,7 @@ export default function Index() {
       </thead>
       <tbody className="bg-grey-light flex flex-col items-center justify-between overflow-y-scroll w-full" style={{ height: '70vh' }}>
         {dummyData.map((discount) => (
-          <tr key={discount.id} className="flex w-full bg-blue-100">
+          <tr key={discount.id} className="flex w-full bg-gray-500">
             <td className="p-4 flex-1 text-center">{discount.restaurantName}</td>
             <td className="p-4 flex-1 text-center">{discount.restaurantAddress}</td>
             <td className="p-4 flex-1 text-center">{discount.discount}</td>
