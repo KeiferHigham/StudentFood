@@ -93,39 +93,25 @@ export default function Index() {
 
   return (
     <div>
-      <h1>Restaurants in Provo/Orem Offering Discounts to BYU/UVU Students</h1>
-
-      <p className="submission-instruction">
-      If you're aware of any restaurants in the area that give discounts to students not currently listed below,
-        please submit the name of that restaurant here:
-      </p>
-
-      <Form method="post" className="single-input-form">
-        <input
-          type="text"
-          name="restaurantName"
-          placeholder="Enter Restaurant Name"
-          maxLength={40}
-          required
-          className="restaurant-name-input"
-        />
-        <button type="submit" className="submit-button">
-          Submit
-        </button>
-      </Form>
       
 <ToastContainer />
 
 <div className="container mx-auto">
-  <h1 className="mb-8 text-center">Restaurants in Provo/Orem Offering Discounts to BYU/UVU Students</h1>
+<h1 className="mt-8 mb-4 text-4xl font-extrabold tracking-tight leading-none text-center text-white md:text-4xl lg:text-4xl bg-black">
+    Restaurants in Provo/Orem Offering Discounts to BYU/UVU Students
+    </h1>
 
+  <p className="submission-instruction">
+      If you're aware of any restaurants in the area that give discounts to students not currently listed below,
+        please click please <a href="https://example.com" className="text-blue-500 underline hover:text-blue-700">click here</a>.
+      </p>
   <div className="w-full flex justify-center">
     <table className="text-left w-full max-w-5xl">
       <thead className="bg-black flex text-white w-full">
         <tr className="flex w-full">
-          <th className="p-4 flex-1 text-center">Restaurant Name</th>
-          <th className="p-4 flex-1 text-center">Restaurant Address</th>
-          <th className="p-4 flex-1 text-center">Discount</th>
+          <th className="p-4 flex-1 text-center font-extrabold">Restaurant Name</th>
+          <th className="p-4 flex-1 text-center font-extrabold">Restaurant Address</th>
+          <th className="p-4 flex-1 text-center font-extrabold">Discount</th>
         </tr>
       </thead>
       <tbody className="bg-grey-light flex flex-col items-center justify-between overflow-y-scroll w-full" style={{ height: '70vh' }}>
@@ -140,9 +126,6 @@ export default function Index() {
     </table>
   </div>
 </div>
-
-
-
     </div>
   );
 }
