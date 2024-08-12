@@ -1,98 +1,16 @@
 import { useLoaderData, useActionData, Form } from '@remix-run/react'; // Updated import path
+import { PrismaClient } from '@prisma/client';
 import { json } from '@remix-run/node'; // Updated import for JSON responses
 import { getDiscounts, submitDiscount } from '../../prisma/db';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import {useEffect} from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import '../tailwind.css'
-const GOOGLE_PLACES_API_KEY = 'AIzaSyCadEijvqVc7ZCAAMAx4QCGndlrVm4oKfM';
+const prisma = new PrismaClient();
 
 
 export const loader = async () => {
   // AIzaSyCadEijvqVc7ZCAAMAx4QCGndlrVm4oKfM
-  const discounts = await getDiscounts();
-  const location = '40.2338,-111.6585'; // Coordinates for Provo, Utah
-  const radius = 24140; // 20 miles in meters (1 mile = 1609.34 meters)
-
-  let apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&type=restaurant&key=${GOOGLE_PLACES_API_KEY}`;
-  const maxRequests = 50;
-  const types = [
-    'restaurant', 
-    'cafe', 
-    'bakery', 
-    'food', 
-    'meal_takeaway', 
-    'meal_delivery', 
-    'steakhouse', 
-    'bar', 
-    'night_club', 
-    'food_court', 
-    'diner', 
-    'pub', 
-    'fast_food', 
-    'buffet', 
-    'ice_cream', 
-    'food_truck', 
-    'pizza', 
-    'vegetarian_or_vegan', 
-    'fine_dining', 
-    'gastropub'
-  ];
-  let allRestaurants = [];
-  let requestCount = 0;
-
-  for (const type of types) {
-    let apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&type=${type}&key=${GOOGLE_PLACES_API_KEY}`;
-
-    while (apiUrl && requestCount < maxRequests) {
-      console.log(`Request #${requestCount + 1} to API with type: ${type}`);
-      
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-
-      if (!data.results) {
-        console.error('Failed to fetch restaurants');
-        break;
-      }
-
-      // Add the current batch of results to the list of all restaurants
-      allRestaurants = allRestaurants.concat(data.results.map((place) => ({
-        restaurantName: place.name,
-        restaurantAddress: place.vicinity,
-      })));
-      console.log(data.results);
-
-      requestCount += 1;
-
-      // Check if there's a next page of results
-      if (data.next_page_token) {
-        console.log('Next page token found, preparing for next request');
-        // Wait a few seconds before making the next request
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // Increased to 3 seconds
-
-        // Update the API URL with the next page token
-        apiUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=${data.next_page_token}&key=${GOOGLE_PLACES_API_KEY}`;
-      } else {
-        console.log('No next page token, stopping requests for this type');
-        apiUrl = null; // No more pages for this type
-      }
-
-      // Stop if the maximum number of requests is reached
-      if (requestCount >= maxRequests) {
-        console.warn('Max request limit reached');
-        break;
-      }
-    }
-
-    // Stop the loop if the maximum number of requests is reached
-    if (requestCount >= maxRequests) {
-      break;
-    }
-  }
-
-  const restaurantCount = allRestaurants.length; // Count the number of restaurants
-  console.log(`Total number of restaurants found: ${restaurantCount}`); 
-  console.log(allRestaurants);
   return json({ discounts }); // Use json function to return data
 };
 
