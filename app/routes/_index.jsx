@@ -3,16 +3,13 @@ import { PrismaClient } from '@prisma/client';
 import { json } from '@remix-run/node'; // Updated import for JSON responses
 import { getDiscounts, submitDiscount } from '../../prisma/db';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import '../tailwind.css'
-const prisma = new PrismaClient();
+import Modal from '../restaurantsubmissionmodal'
 
 
-export const loader = async () => {
-  // AIzaSyCadEijvqVc7ZCAAMAx4QCGndlrVm4oKfM
-  return json({ discounts }); // Use json function to return data
-};
+
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
@@ -32,8 +29,18 @@ export const action = async ({ request }) => {
 };
 
 export default function Index() {
-  const { discounts } = useLoaderData();
+  
   const actionData = useActionData();
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   const dummyData = [
     { id: 101, restaurantName: "Burger Palace", restaurantAddress: "123 Main St", discount: "10% off" },
@@ -105,7 +112,7 @@ export default function Index() {
 
   <p className="submission-instruction">
       If you're aware of any restaurants in the area that give discounts to students not currently listed below,
-        please click please <a href="https://example.com" className="text-blue-500 underline hover:text-blue-700">click here</a>.
+        please click please <a  className="text-blue-500 underline hover:text-blue-700" onClick={handleOpenModal}>click here</a>.
       </p>
   <div className="w-full flex justify-center">
     <table className="text-left w-full max-w-5xl">
@@ -128,6 +135,7 @@ export default function Index() {
     </table>
   </div>
 </div>
+<Modal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }
