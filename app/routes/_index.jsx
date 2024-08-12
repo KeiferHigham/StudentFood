@@ -4,6 +4,8 @@ import { getDiscounts, submitDiscount } from '../../prisma/db';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import {useEffect} from 'react';
 import 'react-toastify/dist/ReactToastify.css';
+import '../tailwind.css'
+
 
 export const loader = async () => {
   const discounts = await getDiscounts();
@@ -30,6 +32,41 @@ export const action = async ({ request }) => {
 export default function Index() {
   const { discounts } = useLoaderData();
   const actionData = useActionData();
+
+  const dummyData = [
+    { id: 101, restaurantName: "Burger Palace", restaurantAddress: "123 Main St", discount: "10% off" },
+    { id: 102, restaurantName: "Pizza Planet", restaurantAddress: "456 Elm St", discount: "Buy 1 Get 1 Free" },
+    { id: 103, restaurantName: "Taco Town", restaurantAddress: "789 Oak St", discount: "15% off" },
+    { id: 104, restaurantName: "Sushi World", restaurantAddress: "321 Maple Ave", discount: "Free Drink" },
+    { id: 105, restaurantName: "Pasta House", restaurantAddress: "654 Pine St", discount: "20% off" },
+    { id: 106, restaurantName: "Steakhouse", restaurantAddress: "987 Birch St", discount: "25% off" },
+    { id: 107, restaurantName: "Cafe Delight", restaurantAddress: "111 Cedar Rd", discount: "10% off" },
+    { id: 108, restaurantName: "BBQ Barn", restaurantAddress: "222 Spruce Ln", discount: "Free Side" },
+    { id: 109, restaurantName: "Noodle Hub", restaurantAddress: "333 Walnut St", discount: "15% off" },
+    { id: 110, restaurantName: "Sandwich Stop", restaurantAddress: "444 Chestnut St", discount: "Buy 2 Get 1 Free" },
+    { id: 111, restaurantName: "Grill Master", restaurantAddress: "555 Oak Ln", discount: "10% off" },
+    { id: 112, restaurantName: "Bistro Bliss", restaurantAddress: "666 Palm St", discount: "Free Dessert" },
+    { id: 113, restaurantName: "Salad Station", restaurantAddress: "777 Cypress Ave", discount: "15% off" },
+    { id: 114, restaurantName: "Juice Joint", restaurantAddress: "888 Redwood St", discount: "10% off" },
+    { id: 115, restaurantName: "Smoothie Spot", restaurantAddress: "999 Magnolia St", discount: "Buy 1 Get 1 50% off" },
+    { id: 116, restaurantName: "Taco Town", restaurantAddress: "789 Oak St", discount: "15% off" },
+    { id: 117, restaurantName: "Sushi World", restaurantAddress: "321 Maple Ave", discount: "Free Drink" },
+    { id: 118, restaurantName: "Pasta House", restaurantAddress: "654 Pine St", discount: "20% off" },
+    { id: 119, restaurantName: "Steakhouse", restaurantAddress: "987 Birch St", discount: "25% off" },
+    { id: 120, restaurantName: "Cafe Delight", restaurantAddress: "111 Cedar Rd", discount: "10% off" },
+    { id: 121, restaurantName: "BBQ Barn", restaurantAddress: "222 Spruce Ln", discount: "Free Side" },
+    { id: 122, restaurantName: "Noodle Hub", restaurantAddress: "333 Walnut St", discount: "15% off" },
+    { id: 123, restaurantName: "Sandwich Stop", restaurantAddress: "444 Chestnut St", discount: "Buy 2 Get 1 Free" },
+    { id: 124, restaurantName: "Grill Master", restaurantAddress: "555 Oak Ln", discount: "10% off" },
+    { id: 125, restaurantName: "Bistro Bliss", restaurantAddress: "666 Palm St", discount: "Free Dessert" },
+    { id: 126, restaurantName: "Salad Station", restaurantAddress: "777 Cypress Ave", discount: "15% off" },
+    { id: 127, restaurantName: "Juice Joint", restaurantAddress: "888 Redwood St", discount: "10% off" },
+    { id: 128, restaurantName: "Smoothie Spot", restaurantAddress: "999 Magnolia St", discount: "Buy 1 Get 1 50% off" },
+    { id: 129, restaurantName: "Burger Palace", restaurantAddress: "123 Main St", discount: "10% off" },
+    { id: 130, restaurantName: "Pizza Planet", restaurantAddress: "456 Elm St", discount: "Buy 1 Get 1 Free" },
+  ];
+
+  
 
   useEffect(() => {
     if (actionData) {
@@ -68,7 +105,7 @@ export default function Index() {
           type="text"
           name="restaurantName"
           placeholder="Enter Restaurant Name"
-          maxLength={40} // Set character limit
+          maxLength={40}
           required
           className="restaurant-name-input"
         />
@@ -79,24 +116,33 @@ export default function Index() {
       
 <ToastContainer />
 
-      <table>
-        <thead>
-          <tr>
-            <th>Restaurant Name</th>
-            <th>Restaurant Address</th>
-            <th>Discount</th>
+<div className="container mx-auto">
+  <h1 className="mb-8 text-center">Restaurants in Provo/Orem Offering Discounts to BYU/UVU Students</h1>
+
+  <div className="w-full flex justify-center">
+    <table className="text-left w-full max-w-5xl">
+      <thead className="bg-black flex text-white w-full">
+        <tr className="flex w-full">
+          <th className="p-4 flex-1 text-center">Restaurant Name</th>
+          <th className="p-4 flex-1 text-center">Restaurant Address</th>
+          <th className="p-4 flex-1 text-center">Discount</th>
+        </tr>
+      </thead>
+      <tbody className="bg-grey-light flex flex-col items-center justify-between overflow-y-scroll w-full" style={{ height: '70vh' }}>
+        {dummyData.map((discount) => (
+          <tr key={discount.id} className="flex w-full bg-blue-100">
+            <td className="p-4 flex-1 text-center">{discount.restaurantName}</td>
+            <td className="p-4 flex-1 text-center">{discount.restaurantAddress}</td>
+            <td className="p-4 flex-1 text-center">{discount.discount}</td>
           </tr>
-        </thead>
-        <tbody>
-          {discounts.map((discount) => (
-            <tr key={discount.id}>
-              <td>{discount.restaurantName}</td>
-              <td>{discount.restaurantAddress}</td>
-              <td>{discount.discount}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
     </div>
   );
 }
