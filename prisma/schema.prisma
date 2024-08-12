@@ -19,3 +19,9 @@ model Submission {
   restaurantName     String
 }
 
+model NearbyRestaurants {
+  id                Int      @id @default(autoincrement())
+  restaurantName String
+  restaurantAddress String
+}
+
