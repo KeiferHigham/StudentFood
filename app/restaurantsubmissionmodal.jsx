@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 export default function Modal({ isOpen, onClose, nearbyRestaurants }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurantAddress, setRestaurantAddress] = useState('');
+  const [discount, setDiscount] = useState('');
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (searchTerm) {
@@ -25,10 +28,31 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants }) {
     setFilteredRestaurants([]); // Hide the dropdown after selection
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!restaurantName) newErrors.restaurantName = 'Restaurant Name is required';
+    if (!restaurantAddress) newErrors.restaurantAddress = 'Restaurant Address is required';
+    if (!discount) newErrors.discount = 'Discount is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    onClose(); // Close the modal after submission
+    if (validateForm()) {
+      toast('🍔 Your restaurant has been submitted! It will appear in the list below after verification.', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+        });
+      onClose(); // Close the modal after submission
+    }
   };
 
   if (!isOpen) return null;
@@ -72,6 +96,9 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants }) {
               onChange={(e) => setRestaurantName(e.target.value)}
               className="w-full p-2 rounded text-black"
             />
+            {errors.restaurantName && (
+              <p className="text-red-500 text-sm mt-1">{errors.restaurantName}</p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-white mb-2">Restaurant Address</label>
@@ -82,6 +109,22 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants }) {
               onChange={(e) => setRestaurantAddress(e.target.value)}
               className="w-full p-2 rounded text-black"
             />
+            {errors.restaurantAddress && (
+              <p className="text-red-500 text-sm mt-1">{errors.restaurantAddress}</p>
+            )}
+          </div>
+          <div className="mb-4">
+            <label className="block text-white mb-2">Discount</label>
+            <input
+              type="text"
+              placeholder="Discount"
+              value={discount}
+              onChange={(e) => setDiscount(e.target.value)}
+              className="w-full p-2 rounded text-black"
+            />
+            {errors.discount && (
+              <p className="text-red-500 text-sm mt-1">{errors.discount}</p>
+            )}
           </div>
           <div className="flex justify-end space-x-4">
             <button

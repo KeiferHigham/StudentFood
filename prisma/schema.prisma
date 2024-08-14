@@ -17,6 +17,8 @@ model Discount {
 model Submission {
   id                 Int      @id @default(autoincrement())
   restaurantName     String
+  restaurantAddress  String
+  discount           String
 }
 
 model NearbyRestaurants {

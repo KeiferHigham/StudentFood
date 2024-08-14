@@ -33,6 +33,8 @@ export const action = async ({ request }) => {
   return json(response, { status: response.status === 'ok' ? 200 : 500 });
 };
 
+
+
 export default function Index() {
   
   const actionData = useActionData();
@@ -118,7 +120,7 @@ export default function Index() {
 
   <p className="submission-instruction text-center font-extrabold mb-4">
       If you're aware of any restaurants in the area that give discounts to students not currently listed below,
-        please click please <a  className="text-blue-500 underline hover:text-blue-700" onClick={handleOpenModal}>click here</a>.
+        please <a  className="text-blue-500 underline hover:text-blue-700" onClick={handleOpenModal}>click here</a>.
       </p>
   <div className="w-full flex justify-center">
     <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden">
@@ -145,3 +147,5 @@ export default function Index() {
     </div>
   );
 }
+
+
