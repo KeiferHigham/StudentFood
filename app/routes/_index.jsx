@@ -4,16 +4,21 @@ import { json } from '@remix-run/node'; // Updated import for JSON responses
 import { getDiscounts, submitDiscount } from '../../prisma/db';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import {useEffect, useState} from 'react';
+const prisma = new PrismaClient();
 import 'react-toastify/dist/ReactToastify.css';
 import '../tailwind.css'
 import Modal from '../restaurantsubmissionmodal'
 
 
-
+export const loader = async () => {
+  const nearbyRestaurants = await prisma.nearbyRestaurants.findMany();
+  return json({ nearbyRestaurants });
+};
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const restaurantName = formData.get('restaurantName');
+  
 
   
   if (!restaurantName) {
@@ -33,6 +38,7 @@ export default function Index() {
   const actionData = useActionData();
 
   const [isModalOpen, setModalOpen] = useState(false);
+  const { nearbyRestaurants } = useLoaderData();
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -135,7 +141,7 @@ export default function Index() {
     </table>
   </div>
 </div>
-<Modal isOpen={isModalOpen} onClose={handleCloseModal} />
+<Modal isOpen={isModalOpen} onClose={handleCloseModal} nearbyRestaurants={nearbyRestaurants} />
     </div>
   );
 }

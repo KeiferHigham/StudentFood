@@ -1,47 +1,105 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Modal = ({ isOpen, onClose }) => {
+export default function Modal({ isOpen, onClose, nearbyRestaurants }) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+  const [restaurantName, setRestaurantName] = useState('');
+  const [restaurantAddress, setRestaurantAddress] = useState('');
+
+  useEffect(() => {
+    if (searchTerm) {
+      const matches = nearbyRestaurants
+        .filter((restaurant) =>
+          restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .slice(0, 10); // Limit to the first 10 matches
+      setFilteredRestaurants(matches);
+    } else {
+      setFilteredRestaurants([]);
+    }
+  }, [searchTerm, nearbyRestaurants]);
+
+  const handleSelect = (restaurant) => {
+    setRestaurantName(restaurant.restaurantName);
+    setRestaurantAddress(restaurant.restaurantAddress);
+    setFilteredRestaurants([]); // Hide the dropdown after selection
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    onClose(); // Close the modal after submission
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="overflow-y-auto sm:p-0 pt-4 pr-4 pb-20 pl-4 bg-gray-800 fixed inset-0 z-50">
-      <div className="flex justify-center items-end text-center min-h-screen sm:block">
-        <div className="bg-gray-500 transition-opacity bg-opacity-75 fixed inset-0"></div>
-        <span className="hidden sm:inline-block sm:align-middle sm:h-screen">​</span>
-        <div className="inline-block text-left bg-gray-900 rounded-lg overflow-hidden align-bottom transition-all transform shadow-2xl sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
-          <div className="items-center w-full mr-auto ml-auto relative max-w-7xl md:px-12 lg:px-24">
-            <div className="grid grid-cols-1">
-              <div className="mt-4 mr-auto mb-4 ml-auto bg-gray-900 max-w-lg">
-                <div className="flex flex-col items-center pt-6 pr-6 pb-6 pl-6">
-                
-                  <p className="mt-8 text-2xl font-semibold leading-none text-white tracking-tighter lg:text-3xl">
-                    Search For Restaraunts Below
-                  </p>
-                  <p className="mt-3 text-base leading-relaxed text-center text-gray-200">
-                    Find Restaurants
-                  </p>
-                  <div className="w-full mt-6">
-                    <a
-                      href="#"
-                      className="flex text-center items-center justify-center w-full pt-4 pr-10 pb-4 pl-10 text-base font-medium text-white bg-indigo-600 rounded-xl transition duration-500 ease-in-out transform hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Hire me
-                    </a>
-                  </div>
-                  <button
-                    onClick={onClose}
-                    className="mt-4 text-sm text-gray-500 underline hover:text-gray-300"
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
+      <div className="bg-gray-900 rounded-lg p-6 max-w-xl w-full">
+        <h2 className="text-2xl font-semibold text-white mb-4">Submit a Restaurant</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-white mb-2">Search</label>
+            <input
+              type="text"
+              placeholder="Search by Restaurant Name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-2 rounded text-black"
+            />
+            {filteredRestaurants.length > 0 && (
+              <ul className="bg-white border border-gray-300 rounded mt-2 max-h-40 overflow-y-auto">
+                {filteredRestaurants.map((restaurant) => (
+                  <li
+                    key={`${restaurant.restaurantName}-${restaurant.restaurantAddress}`}
+                    className="p-2 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleSelect(restaurant)}
                   >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
+                    <span className="font-bold text-black">{restaurant.restaurantName}</span>
+                    <br />
+                    <span className="text-sm text-black">{restaurant.restaurantAddress}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-        </div>
+          <div className="mb-4">
+            <label className="block text-white mb-2">Restaurant Name</label>
+            <input
+              type="text"
+              placeholder="Restaurant Name"
+              value={restaurantName}
+              onChange={(e) => setRestaurantName(e.target.value)}
+              className="w-full p-2 rounded text-black"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-white mb-2">Restaurant Address</label>
+            <input
+              type="text"
+              placeholder="Restaurant Address"
+              value={restaurantAddress}
+              onChange={(e) => setRestaurantAddress(e.target.value)}
+              className="w-full p-2 rounded text-black"
+            />
+          </div>
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
-};
-
-export default Modal;
+}
