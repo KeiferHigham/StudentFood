@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
+import {
+  useSubmit,
+} from '@remix-run/react';
 
-export default function Modal({ isOpen, onClose, nearbyRestaurants }) {
+export default function Modal({ isOpen, onClose, nearbyRestaurants, submissions }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurantAddress, setRestaurantAddress] = useState('');
   const [discount, setDiscount] = useState('');
   const [errors, setErrors] = useState({});
+  const submitForm = useSubmit();
 
   useEffect(() => {
     if (searchTerm) {
@@ -33,6 +37,16 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants }) {
     if (!restaurantName) newErrors.restaurantName = 'Restaurant Name is required';
     if (!restaurantAddress) newErrors.restaurantAddress = 'Restaurant Address is required';
     if (!discount) newErrors.discount = 'Discount is required';
+    const duplicate = submissions.find(
+      (submission) =>
+        submission.restaurantName === restaurantName &&
+        submission.restaurantAddress === restaurantAddress &&
+        submission.discount === discount
+    );
+
+    if (duplicate) {
+      newErrors.duplicate = 'Unable to submit. This restaurant already exists.';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -40,6 +54,11 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
+      const formData = new FormData();
+      formData.append("restaurantName", restaurantName);
+      formData.append("restaurantAddress",restaurantAddress);
+      formData.append("discount",discount);
+      submitForm(formData, { method: "post" });
       toast('🍔 Your restaurant has been submitted! It will appear in the list below after verification.', {
         position: "top-center",
         autoClose: 5000,

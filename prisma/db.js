@@ -5,11 +5,35 @@ export const getDiscounts = async () => {
   return await prisma.discount.findMany();
 };
 
-export const submitDiscount = async (restaurantName) => {
-  return await prisma.submission.create({
-    data: {
-      restaurantName,
+export const submitDiscount = async (restaurantName, restaurantAddress, discount) => {
+  const existingSubmission = await prisma.submission.findFirst({
+    where: {
+      restaurantName: restaurantName,
+      restaurantAddress: restaurantAddress,
+      discount: discount,
     },
   });
+
+  if (existingSubmission) {
+    return {
+      status: 'error',
+      message: 'Unable to submit. This restaurant already exists.',
+    };
+  }
+
+  const newSubmission = await prisma.submission.create({
+    data: {
+      restaurantName,
+      restaurantAddress,
+      discount,
+      verified: false,
+    },
+  });
+
+  return {
+    status: 'success',
+    message: 'Restaurant submitted successfully.',
+    newSubmission,
+  };
 };
 

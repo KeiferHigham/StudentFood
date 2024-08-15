@@ -12,22 +12,20 @@ import Modal from '../restaurantsubmissionmodal'
 
 export const loader = async () => {
   const nearbyRestaurants = await prisma.nearbyRestaurants.findMany();
-  return json({ nearbyRestaurants });
+  const submissions = await prisma.submission.findMany({
+    where: {
+      verified: true,
+    },
+  });
+  return json({ nearbyRestaurants, submissions });
 };
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const restaurantName = formData.get('restaurantName');
+  const restaurantAddress = formData.get('restaurantAddress');
+  const discount = formData.get("discount");
   
-
-  
-  if (!restaurantName) {
-    return json({ status: 'error', message: 'Restaurant name is required.' }, { status: 400 });
-  }
-
-  if (restaurantName.length > 40) {
-    return json({ status: 'error', message: 'Restaurant name must be 40 characters or less.' }, { status: 400 });
-  }
   const response = await submitDiscount(restaurantName);
 
   return json(response, { status: response.status === 'ok' ? 200 : 500 });
@@ -40,7 +38,7 @@ export default function Index() {
   const actionData = useActionData();
 
   const [isModalOpen, setModalOpen] = useState(false);
-  const { nearbyRestaurants } = useLoaderData();
+  const { nearbyRestaurants, submissions } = useLoaderData();
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -143,7 +141,7 @@ export default function Index() {
     </table>
   </div>
 </div>
-<Modal isOpen={isModalOpen} onClose={handleCloseModal} nearbyRestaurants={nearbyRestaurants} />
+<Modal isOpen={isModalOpen} onClose={handleCloseModal} nearbyRestaurants={nearbyRestaurants} submissions={submissions} />
     </div>
   );
 }
