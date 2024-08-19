@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ToastContainer, toast, Bounce } from 'react-toastify';
 import {
   useSubmit,
 } from '@remix-run/react';
@@ -59,18 +58,7 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants, submissions 
       formData.append("restaurantAddress",restaurantAddress);
       formData.append("discount",discount);
       submitForm(formData, { method: "post" });
-      toast('🍔 Your restaurant has been submitted! It will appear in the list below after verification.', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-        });
-      onClose(); // Close the modal after submission
+      onClose();
     }
   };
 

@@ -1,15 +1,10 @@
 -- CreateTable
-CREATE TABLE "Discount" (
+CREATE TABLE "Submissions" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "restaurantName" TEXT NOT NULL,
     "restaurantAddress" TEXT NOT NULL,
-    "discount" TEXT NOT NULL
-);
-
--- CreateTable
-CREATE TABLE "Submission" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "restaurantName" TEXT NOT NULL
+    "discount" TEXT NOT NULL,
+    "verified" BOOLEAN NOT NULL DEFAULT false
 );
 
 -- CreateTable

@@ -8,7 +8,7 @@ generator client {
 }
 
 
-model Submission {
+model Submissions {
   id                Int      @id @default(autoincrement())
   restaurantName    String
   restaurantAddress String

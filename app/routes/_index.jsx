@@ -12,7 +12,7 @@ import Modal from '../restaurantsubmissionmodal'
 
 export const loader = async () => {
   const nearbyRestaurants = await prisma.nearbyRestaurants.findMany();
-  const submissions = await prisma.submission.findMany({
+  const submissions = await prisma.submissions.findMany({
     where: {
       verified: true,
     },
@@ -26,7 +26,7 @@ export const action = async ({ request }) => {
   const restaurantAddress = formData.get('restaurantAddress');
   const discount = formData.get("discount");
   
-  const response = await submitDiscount(restaurantName);
+  const response = await submitDiscount(restaurantName, restaurantAddress, discount);
 
   return json(response, { status: response.status === 'ok' ? 200 : 500 });
 };
@@ -36,17 +36,41 @@ export const action = async ({ request }) => {
 export default function Index() {
   
   const actionData = useActionData();
+  useEffect(() => {
+    if (actionData) {
+      console.log(actionData.status);
+      if (actionData.status === 'success') {
+        toast.success('🍔 Your restaurant has been submitted! It will appear in the list below after verification.', {
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      } else if (actionData.status === 'error') {
+        toast.error(actionData.message || 'Error submitting restaurant.', {
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    }
+  }, [actionData]);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const { nearbyRestaurants, submissions } = useLoaderData();
 
-  const handleOpenModal = () => {
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-  };
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterBy, setFilterBy] = useState({
+    restaurantName: true,
+    restaurantAddress: true,
+    discount: true,
+  });
 
   const dummyData = [
     { id: 101, restaurantName: "Burger Palace", restaurantAddress: "123 Main St", discount: "10% off" },
@@ -81,29 +105,36 @@ export default function Index() {
     { id: 130, restaurantName: "Pizza Planet", restaurantAddress: "456 Elm St", discount: "Buy 1 Get 1 Free" },
   ];
 
-  
+  const [filteredRestaurants, setFilteredRestaurants] = useState(dummyData); // Initialize with full list
 
   useEffect(() => {
-    if (actionData) {
-      console.log(actionData); // This will only run when actionData changes
-      if (actionData.id > 0) {
-        toast('🍔 Your restaurant has been submitted! It will appear in the list below after verification.', {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-          });
-      } else {
-        toast.error("Server Error: Unable to Submit Restaurant");
-      }
+    if (searchTerm) {
+      const filtered = dummyData.filter((restaurant) =>
+        restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        restaurant.restaurantAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        restaurant.discount.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredRestaurants(filtered);
+    } else {
+      setFilteredRestaurants(dummyData);
     }
-  }, [actionData]); // This effect runs only when actionData changes
-    
+  }, [searchTerm]);
+
+
+
+  const handleToggleFilters = () => {
+    setShowFilters(!showFilters);
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+
     
 
   return (
@@ -115,31 +146,41 @@ export default function Index() {
 <h1 className="mt-8 mb-4 text-4xl font-extrabold tracking-tight leading-none text-center text-white md:text-4xl lg:text-4xl ">
     Restaurants in Provo/Orem Offering Discounts to BYU/UVU Students
     </h1>
-
   <p className="submission-instruction text-center font-extrabold mb-4">
       If you're aware of any restaurants in the area that give discounts to students not currently listed below,
         please <a  className="text-blue-500 underline hover:text-blue-700" onClick={handleOpenModal}>click here</a>.
       </p>
+
+      {/* Search Input and Toggle Button */}
+      <div className="mb-4 flex justify-center">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search..."
+            className="border-2 p-2 w-full max-w-lg text-black"
+          />
+        </div>
   <div className="w-full flex justify-center">
-    <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden">
-      <thead className="bg-black flex text-white w-full">
-        <tr className="flex w-full">
-          <th className="p-4 flex-1 text-center font-extrabold">Restaurant Name</th>
-          <th className="p-4 flex-1 text-center font-extrabold">Restaurant Address</th>
-          <th className="p-4 flex-1 text-center font-extrabold">Discount</th>
+  <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden">
+    <thead className="bg-black text-white">
+      <tr>
+        <th className="p-4 text-center font-extrabold">Restaurant Name</th>
+        <th className="p-4 text-center font-extrabold">Restaurant Address</th>
+        <th className="p-4 text-center font-extrabold">Discount</th>
+      </tr>
+    </thead>
+    <tbody className="bg-grey-light w-full">
+      {filteredRestaurants.map((discount) => (
+        <tr key={discount.id} className="bg-gray-500">
+          <td className="p-4 text-center">{discount.restaurantName}</td>
+          <td className="p-4 text-center">{discount.restaurantAddress}</td>
+          <td className="p-4 text-center">{discount.discount}</td>
         </tr>
-      </thead>
-      <tbody className="bg-grey-light flex flex-col items-center justify-between overflow-y-scroll w-full" style={{ height: '70vh' }}>
-        {dummyData.map((discount) => (
-          <tr key={discount.id} className="flex w-full bg-gray-500">
-            <td className="p-4 flex-1 text-center">{discount.restaurantName}</td>
-            <td className="p-4 flex-1 text-center">{discount.restaurantAddress}</td>
-            <td className="p-4 flex-1 text-center">{discount.discount}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
+      ))}
+    </tbody>
+  </table>
+</div>
 </div>
 <Modal isOpen={isModalOpen} onClose={handleCloseModal} nearbyRestaurants={nearbyRestaurants} submissions={submissions} />
     </div>

@@ -6,7 +6,7 @@ export const getDiscounts = async () => {
 };
 
 export const submitDiscount = async (restaurantName, restaurantAddress, discount) => {
-  const existingSubmission = await prisma.submission.findFirst({
+  const existingSubmission = await prisma.submissions.findFirst({
     where: {
       restaurantName: restaurantName,
       restaurantAddress: restaurantAddress,
@@ -17,11 +17,10 @@ export const submitDiscount = async (restaurantName, restaurantAddress, discount
   if (existingSubmission) {
     return {
       status: 'error',
-      message: 'Unable to submit. This restaurant already exists.',
+      message: 'Unable to submit. This discount already exists.',
     };
   }
-
-  const newSubmission = await prisma.submission.create({
+  const newSubmission = await prisma.submissions.create({
     data: {
       restaurantName,
       restaurantAddress,
