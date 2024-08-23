@@ -13,6 +13,8 @@ model Submissions {
   restaurantName    String
   restaurantAddress String
   discount          String
+  latitude          Float
+  longitude         Float
   verified          Boolean  @default(false)
 }
 
@@ -20,5 +22,6 @@ model NearbyRestaurants {
   id                Int      @id @default(autoincrement())
   restaurantName String
   restaurantAddress String
+  @@unique([restaurantName, restaurantAddress])
 }
 

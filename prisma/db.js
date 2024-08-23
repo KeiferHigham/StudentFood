@@ -1,11 +1,19 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+const GOOGLE_GEOCODING_API_KEY = 'AIzaSyAfKs5ibGFfCMME2OuZcHMI5mPIguY3tLs';
+
 export const getDiscounts = async () => {
   return await prisma.discount.findMany();
 };
 
-export const submitDiscount = async (restaurantName, restaurantAddress, discount) => {
+export const submitDiscount = async (restaurantName, restaurantAddress, discount, lat, lng) => {
+  const latitude = parseFloat(lat);
+  const longitude = parseFloat(lng);
+
+  console.log("latitude is " + latitude);
+  console.log("longitude is " + longitude);
+  
   const existingSubmission = await prisma.submissions.findFirst({
     where: {
       restaurantName: restaurantName,
@@ -25,6 +33,8 @@ export const submitDiscount = async (restaurantName, restaurantAddress, discount
       restaurantName,
       restaurantAddress,
       discount,
+      latitude,
+      longitude,
       verified: false,
     },
   });
@@ -35,4 +45,9 @@ export const submitDiscount = async (restaurantName, restaurantAddress, discount
     newSubmission,
   };
 };
+
+
+
+
+
 

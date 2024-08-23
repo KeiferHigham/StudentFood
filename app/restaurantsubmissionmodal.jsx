@@ -3,11 +3,41 @@ import {
   useSubmit,
 } from '@remix-run/react';
 
+const GOOGLE_GEOCODING_API_KEY = 'AIzaSyB4hQR-xVc5ZnNB9uNv_YEYHlLB8P_LUHs';
+
+async function getCoordinates(address) {
+  const encodedAddress = encodeURIComponent(address);
+  const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${GOOGLE_GEOCODING_API_KEY}`;
+
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+  console.log(data);
+
+  if (data.status === 'OK') {
+    const location = data.results[0].geometry.location;
+    return {
+      valid: true,
+      latitude: location.lat,
+      longitude: location.lng,
+      formattedAddress: data.results[0].formatted_address,
+    };
+  } else {
+    return {
+      valid: false,
+      latitude: 0.0,
+      longitude: 0.0,
+      formattedAddress: address,
+    };
+  }
+}
+
 export default function Modal({ isOpen, onClose, nearbyRestaurants, submissions }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurantAddress, setRestaurantAddress] = useState('');
+  const [latitude,setLatitude] = useState(0);
+  const [longitude,setLongitude] = useState(0);
   const [discount, setDiscount] = useState('');
   const [errors, setErrors] = useState({});
   const submitForm = useSubmit();
@@ -31,11 +61,14 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants, submissions 
     setFilteredRestaurants([]); // Hide the dropdown after selection
   };
 
-  const validateForm = () => {
+  const validateForm = async () => {
     const newErrors = {};
     if (!restaurantName) newErrors.restaurantName = 'Restaurant Name is required';
     if (!restaurantAddress) newErrors.restaurantAddress = 'Restaurant Address is required';
     if (!discount) newErrors.discount = 'Discount is required';
+    
+
+
     const duplicate = submissions.find(
       (submission) =>
         submission.restaurantName === restaurantName &&
@@ -50,13 +83,19 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants, submissions 
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       const formData = new FormData();
       formData.append("restaurantName", restaurantName);
       formData.append("restaurantAddress",restaurantAddress);
       formData.append("discount",discount);
+      const coordinates =  await getCoordinates(restaurantAddress);
+    console.log("coordinates are " + coordinates.latitude);
+      formData.append("latitude", coordinates.latitude);
+      formData.append("longitude",coordinates.longitude);
+      console.log(latitude);
+      console.log(longitude);
       submitForm(formData, { method: "post" });
       onClose();
     }
@@ -116,9 +155,13 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants, submissions 
               onChange={(e) => setRestaurantAddress(e.target.value)}
               className="w-full p-2 rounded text-black"
             />
-            {errors.restaurantAddress && (
-              <p className="text-red-500 text-sm mt-1">{errors.restaurantAddress}</p>
-            )}
+           {errors.restaurantAddress && (
+  <p className="text-red-500 text-sm mt-1">{errors.restaurantAddress}</p>
+)}
+{!errors.restaurantAddress && errors.invalidAddress && (
+  <p className="text-red-500 text-sm mt-1">{errors.invalidAddress}</p>
+)}
+
           </div>
           <div className="mb-4">
             <label className="block text-white mb-2">Discount</label>

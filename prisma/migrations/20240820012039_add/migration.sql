@@ -4,6 +4,8 @@ CREATE TABLE "Submissions" (
     "restaurantName" TEXT NOT NULL,
     "restaurantAddress" TEXT NOT NULL,
     "discount" TEXT NOT NULL,
+    "latitude" REAL NOT NULL,
+    "longitude" REAL NOT NULL,
     "verified" BOOLEAN NOT NULL DEFAULT false
 );
 

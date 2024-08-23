@@ -3,8 +3,8 @@ import fetch from 'node-fetch';
 
 const prisma = new PrismaClient();
 const GOOGLE_PLACES_API_KEY = 'AIzaSyCadEijvqVc7ZCAAMAx4QCGndlrVm4oKfM';
-const location = '40.2338,-111.6585'; // Coordinates for Provo, Utah
-const radius = 24140; // 15 miles in meters (15 miles)
+const location = '40.2338,-111.6585';
+const radius = 24140; 
 const maxRequests = 100;
 
 const types = [
@@ -27,10 +27,10 @@ const types = [
   'pizza', 
   'vegetarian_or_vegan', 
   'fine_dining', 
-  'gastropub'
+  'gastropub',
 ];
 
-async function updateRestaurants() {
+export async function updateRestaurants() {
   let allRestaurants = [];
   let requestCount = 0;
 
@@ -80,16 +80,25 @@ async function updateRestaurants() {
   // Clear existing data in the database
   await prisma.NearbyRestaurants.deleteMany({});
 
+  const uniqueRestaurants = Array.from(
+    new Map(
+      allRestaurants.map(restaurant => [
+        `${restaurant.restaurantName}-${restaurant.restaurantAddress}`,
+        restaurant
+      ])
+    ).values()
+  );
   // Insert new data into the database
   await prisma.NearbyRestaurants.createMany({
-    data: allRestaurants
+    data: uniqueRestaurants
   });
 
   console.log(`Total number of restaurants found and saved: ${allRestaurants.length}`);
 }
 
-updateRestaurants()
-  .catch(e => console.error(e))
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+// updateRestaurants()
+ // .catch(e => console.error(e))
+ // .finally(async () => {
+   // await prisma.$disconnect();
+  // });
+  
