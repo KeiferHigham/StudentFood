@@ -110,42 +110,59 @@ export default function Index() {
   const { nearbyRestaurants, submissions } = useLoaderData();
   const [isModalOpen, setModalOpen] = useState(false);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+  const [submissionsWithDistance, setSubmissionsWithDistance] = useState([]);
   const [isDistanceAvailable, setIsDistanceAvailable] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortDirection, setSortDirection] = useState(null);
+  const [sortOption, setSortOption] = useState("closest"); 
+
+  const handleSortChange = (event) => {
+    const option = event.target.value;
+    setSortOption(option);
+  };
 
   useEffect(() => {
     getUserLocationAndUpdateRestaurants(submissions).then((updatedRestaurants) => {
-      setFilteredRestaurants(updatedRestaurants);
-      setIsDistanceAvailable(updatedRestaurants.some((restaurant) => restaurant.distanceFromUser));
+      if (updatedRestaurants.some((restaurant) => restaurant.distanceFromUser)) { 
+        const sortedByDistance = updatedRestaurants.sort((a, b) => parseFloat(a.distanceFromUser) - parseFloat(b.distanceFromUser));
+        setSubmissionsWithDistance(sortedByDistance);
+        setFilteredRestaurants(sortedByDistance);
+        setIsDistanceAvailable(true);
+      } else {
+        const sortedByNewest = updatedRestaurants.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setFilteredRestaurants(sortedByNewest);
+        setIsDistanceAvailable(false);
+      }
     });
   }, [submissions]);
 
+  
+
   useEffect(() => {
-    if (searchTerm) {
-      const filtered = filteredRestaurants.filter((restaurant) =>
+    if (sortOption === "closest") {
+      setFilteredRestaurants((prev) =>
+        [...prev].sort((a, b) => parseFloat(a.distanceFromUser) - parseFloat(b.distanceFromUser))
+      );
+    } else if (sortOption === "newest") {
+      setFilteredRestaurants((prev) =>
+        [...prev].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      );
+    }
+  }, [sortOption]);
+
+  useEffect(() => {
+    if(searchTerm === '') {
+      setFilteredRestaurants(submissionsWithDistance);
+    }
+    else if (searchTerm) {
+      const filtered = submissionsWithDistance.filter((restaurant) =>
         restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         restaurant.restaurantAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        restaurant.discount.toLowerCase().includes(searchTerm.toLowerCase())
+        restaurant.discount.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === ''
       );
-      setFilteredRestaurants(filtered);
-    } else {
-      setFilteredRestaurants(submissions);
+      const sortedByDistance = filtered.sort((a, b) => parseFloat(a.distanceFromUser) - parseFloat(b.distanceFromUser));
+      setFilteredRestaurants(sortedByDistance);
     }
   }, [searchTerm]);
-
-  const handleSort = (order) => {
-    const sortedRestaurants = [...filteredRestaurants].sort((a, b) => {
-      if (order === 'asc') {
-        return a.distanceFromUser - b.distanceFromUser;
-      } else if (order === 'desc') {
-        return b.distanceFromUser - a.distanceFromUser;
-      }
-      return 0;
-    });
-    
-    setFilteredRestaurants(sortedRestaurants);
-  };
   
 
   const handleOpenModal = () => setModalOpen(true);
@@ -170,10 +187,6 @@ export default function Index() {
             placeholder="Search..."
             className="border-2 p-2 w-full max-w-lg text-black"
           />
-            <select onChange={(e) => setSortBy(e.target.value)} className="ml-2 p-2">
-            <option value="default">Default</option>
-            <option value="distance">Sort by Distance</option>
-            </select>
         </div>
         <div className="w-full flex justify-center">
           <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden">
@@ -182,14 +195,19 @@ export default function Index() {
                 <th className="p-4 text-center font-extrabold">Restaurant Name</th>
                 <th className="p-4 text-center font-extrabold">Restaurant Address</th>
                 <th className="p-4 text-center font-extrabold">Discount</th>
-                {isDistanceAvailable && (
-                  <th className="p-4 text-center font-extrabold">
-                  Distance From User
-                  <i className="fa fa-arrow-up ml-2 cursor-pointer" onClick={() => handleSort('asc')}></i>
-                  <i className="fa fa-arrow-down ml-2 cursor-pointer" onClick={() => handleSort('desc')}></i>
+                <th className="p-4 text-center font-extrabold">
+                  Sort By:
+                  <select
+                  className="ml-2 text-black"
+                  value={sortOption}
+                   onChange={handleSortChange}
+                  >
+                  {isDistanceAvailable && (
+                  <option value="closest">Closest To Me</option>
+                    )}
+                <option value="newest">New Additions</option>
+                  </select>
                 </th>
-                
-                )}
               </tr>
             </thead>
             <tbody className="bg-grey-light w-full">
@@ -199,7 +217,7 @@ export default function Index() {
                   <td className="p-4 text-center">{restaurant.restaurantAddress}</td>
                   <td className="p-4 text-center">{restaurant.discount}</td>
                   {isDistanceAvailable && (
-                    <td className="p-4 text-center">{restaurant.distanceFromUser} miles</td>
+                    <td className="p-4 text-center">{restaurant.distanceFromUser} miles away</td>
                   )}
                 </tr>
               ))}

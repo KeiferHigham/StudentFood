@@ -16,6 +16,7 @@ model Submissions {
   latitude          Float
   longitude         Float
   verified          Boolean  @default(false)
+  createdAt         DateTime @default(now())
 }
 
 model NearbyRestaurants {
