@@ -168,6 +168,8 @@ export default function Index() {
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
 
+  console.log(isDistanceAvailable);
+
   return (
     <div>
       <ToastContainer />
@@ -188,6 +190,11 @@ export default function Index() {
             className="border-2 p-2 w-3/4 max-w-lg text-black"
           />
         </div>
+        {!isDistanceAvailable && (
+          <p className="info-message text-center font-extrabold mb-4">
+            Restaurants are sorted from newest additions to oldest
+          </p>
+        )}
         <div className="w-full flex justify-center">
         <div className="w-3/4 flex justify-center">
           <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden responsive-table">
@@ -196,19 +203,21 @@ export default function Index() {
                 <th className="p-4 text-center font-extrabold">Restaurant Name</th>
                 <th className="p-4 text-center font-extrabold">Restaurant Address</th>
                 <th className="p-4 text-center font-extrabold">Discount</th>
-                <th className="p-4 text-center font-extrabold">
-                  Sort By:
-                  <select
-                  className="ml-2 text-black"
-                  value={sortOption}
-                   onChange={handleSortChange}
-                  >
-                  {isDistanceAvailable && (
-                  <option value="closest">Closest To Me</option>
-                    )}
-                <option value="newest">New Additions</option>
-                  </select>
-                </th>
+                {isDistanceAvailable && (
+                       <th className="p-4 text-center font-extrabold">
+                       Sort By:
+                       <select
+                       className="ml-2 text-black"
+                       value={sortOption}
+                        onChange={handleSortChange}
+                       >
+                       {isDistanceAvailable && (
+                       <option value="closest">Closest To Me</option>
+                         )}
+                     <option value="newest">New Additions</option>
+                       </select>
+                     </th>
+                )}
               </tr>
             </thead>
             <tbody className="bg-grey-light w-full">
