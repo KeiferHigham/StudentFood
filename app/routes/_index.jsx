@@ -162,7 +162,7 @@ export default function Index() {
       const sortedByDistance = filtered.sort((a, b) => parseFloat(a.distanceFromUser) - parseFloat(b.distanceFromUser));
       setFilteredRestaurants(sortedByDistance);
     }
-  }, [searchTerm]);
+  }, [searchTerm, submissions]);
   
 
   const handleOpenModal = () => setModalOpen(true);
@@ -179,17 +179,18 @@ export default function Index() {
           If you're aware of any restaurants in the area that give discounts to students not currently listed below,
           please <a className="text-blue-500 underline hover:text-blue-700" onClick={handleOpenModal}>click here</a>.
         </p>
-        <div className="mb-4 flex justify-center">
+        <div className="mb-4 flex justify-center responsive-search">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search..."
-            className="border-2 p-2 w-full max-w-lg text-black"
+            className="border-2 p-2 w-3/4 max-w-lg text-black"
           />
         </div>
         <div className="w-full flex justify-center">
-          <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden">
+        <div className="w-3/4 flex justify-center">
+          <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden responsive-table">
             <thead className="bg-black text-white">
               <tr>
                 <th className="p-4 text-center font-extrabold">Restaurant Name</th>
@@ -224,6 +225,7 @@ export default function Index() {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} nearbyRestaurants={nearbyRestaurants} submissions={submissions} />
     </div>

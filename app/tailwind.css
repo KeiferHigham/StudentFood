@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media (max-width: 700px) {
+    .responsive-table {
+      font-size: 11px; /* Adjust the font size as needed */
+    }
+  }
+
+  @media (max-width: 650px) {
+    .responsive-table {
+      font-size: 10px; /* Adjust the font size as needed */
+    }
+  }
+
+  @media (max-width: 600px) {
+    .responsive-table {
+      font-size: 9px; /* Adjust the font size as needed */
+    }
+  }
+  
+  @media (max-width: 550px) {
+    .responsive-table {
+      font-size: 8px; /* Changes font size to 6 points */
+    }
+  }
+
+  @media (max-width: 500px) {
+    .responsive-table {
+      font-size: 7px; /* Changes font size to 6 points */
+    }
+  }
+  @media (max-width: 450px) {
+    .responsive-table {
+      font-size: 6px; /* Changes font size to 6 points */
+    }
+  }
+  @media (max-width: 400px) {
+    .responsive-table {
+      font-size: 5px; /* Changes font size to 6 points */
+    }
+  }
+
+
+  
+
+
