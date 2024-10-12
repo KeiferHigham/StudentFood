@@ -4,42 +4,48 @@
 
 @media (max-width: 700px) {
     .responsive-table {
-      font-size: 11px; /* Adjust the font size as needed */
+      font-size: 13px; /* Adjust the font size as needed */
     }
   }
 
   @media (max-width: 650px) {
     .responsive-table {
-      font-size: 10px; /* Adjust the font size as needed */
+      font-size: 12px; /* Adjust the font size as needed */
     }
   }
 
   @media (max-width: 600px) {
     .responsive-table {
-      font-size: 9px; /* Adjust the font size as needed */
+      font-size: 11px; /* Adjust the font size as needed */
     }
   }
   
   @media (max-width: 550px) {
     .responsive-table {
-      font-size: 8px; /* Changes font size to 6 points */
+      font-size: 10px; /* Changes font size to 6 points */
     }
   }
 
   @media (max-width: 500px) {
     .responsive-table {
-      font-size: 7px; /* Changes font size to 6 points */
+      font-size: 9px; /* Changes font size to 6 points */
     }
   }
   @media (max-width: 450px) {
     .responsive-table {
-      font-size: 6px; /* Changes font size to 6 points */
+      font-size: 8px; /* Changes font size to 6 points */
     }
   }
   @media (max-width: 400px) {
     .responsive-table {
-      font-size: 5px; /* Changes font size to 6 points */
+      font-size: 7px; /* Changes font size to 6 points */
     }
+  }
+
+  th, td {
+    border: 1px solid black; /* Adds a black border around each cell */
+    padding: 8px; /* Adds some padding inside the cells */
+    text-align: center; /* Centers text within the cells */
   }
 
 

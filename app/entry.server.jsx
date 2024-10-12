@@ -1,26 +1,29 @@
-/**
- * By default, Remix will handle generating the HTTP Response for you.
- * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
- * For more information, see https://remix.run/file-conventions/entry.server
- */
-
 import { PassThrough } from "node:stream";
-
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 
+// ABORT_DELAY for the streaming timeout
 const ABORT_DELAY = 5_000;
+
+// Custom error handling for server-side errors
+export const handleError = (error, { request }) => {
+  // Log detailed error information
+  console.error("Error during SSR:", error);
+  
+  // Optionally, send errors to a third-party service like Sentry
+  // Sentry.captureException(error);
+
+  // Log request details for better understanding
+  console.error("Request details:", request.url);
+};
 
 export default function handleRequest(
   request,
   responseStatusCode,
   responseHeaders,
   remixContext,
-  // This is ignored so we can keep it in the template for visibility.  Feel
-  // free to delete this parameter in your app if you're not using it!
-  // eslint-disable-next-line no-unused-vars
   loadContext
 ) {
   return isbot(request.headers.get("user-agent") || "")
@@ -70,15 +73,15 @@ function handleBotRequest(
           pipe(body);
         },
         onShellError(error) {
+          // Log initial shell rendering errors
+          handleError(error, { request });
           reject(error);
         },
         onError(error) {
           responseStatusCode = 500;
-          // Log streaming rendering errors from inside the shell.  Don't log
-          // errors encountered during initial shell rendering since they'll
-          // reject and get logged in handleDocumentRequest.
+          // Log errors during streaming after shell rendering
           if (shellRendered) {
-            console.error(error);
+            handleError(error, { request });
           }
         },
       }
@@ -120,15 +123,15 @@ function handleBrowserRequest(
           pipe(body);
         },
         onShellError(error) {
+          // Log initial shell rendering errors
+          handleError(error, { request });
           reject(error);
         },
         onError(error) {
           responseStatusCode = 500;
-          // Log streaming rendering errors from inside the shell.  Don't log
-          // errors encountered during initial shell rendering since they'll
-          // reject and get logged in handleDocumentRequest.
+          // Log errors during streaming after shell rendering
           if (shellRendered) {
-            console.error(error);
+            handleError(error, { request });
           }
         },
       }

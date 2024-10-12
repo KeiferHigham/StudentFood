@@ -1,12 +1,11 @@
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")  // Load the PostgreSQL connection URL from .env file
 }
 
 generator client {
   provider = "prisma-client-js"
 }
-
 
 model Submissions {
   id                Int      @id @default(autoincrement())
@@ -21,8 +20,9 @@ model Submissions {
 
 model NearbyRestaurants {
   id                Int      @id @default(autoincrement())
-  restaurantName String
+  restaurantName    String
   restaurantAddress String
   @@unique([restaurantName, restaurantAddress])
 }
+
 

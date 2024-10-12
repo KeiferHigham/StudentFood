@@ -1,14 +1,11 @@
 import { useLoaderData, useActionData, Form } from '@remix-run/react';
-import { PrismaClient } from '@prisma/client';
 import { json } from '@remix-run/node';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import { useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import '../tailwind.css';
 import Modal from '../restaurantsubmissionmodal';
-import { submitDiscount } from '../../prisma/db';
-
-const prisma = new PrismaClient();
+import { submitDiscount, getNearbyRestaurants, getVerifiedSubmissions } from '../../prisma/db';
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -58,12 +55,8 @@ function getUserLocationAndUpdateRestaurants(submissions) {
 }
 
 export const loader = async () => {
-  const nearbyRestaurants = await prisma.nearbyRestaurants.findMany();
-  const submissions = await prisma.submissions.findMany({
-    where: {
-      verified: true,
-    },
-  });
+ const nearbyRestaurants = [] // await getNearbyRestaurants();
+  const submissions = await getVerifiedSubmissions();
 
   return json({ nearbyRestaurants, submissions });
 };
@@ -107,6 +100,7 @@ export default function Index() {
       }
     }
   }, [actionData]);
+  //updateRestaurants();
   const { nearbyRestaurants, submissions } = useLoaderData();
   const [isModalOpen, setModalOpen] = useState(false);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
@@ -150,17 +144,32 @@ export default function Index() {
   }, [sortOption]);
 
   useEffect(() => {
-    if(searchTerm === '') {
+    if(searchTerm === '' && isDistanceAvailable) {
       setFilteredRestaurants(submissionsWithDistance);
     }
+    else if(searchTerm === '') {
+      setFilteredRestaurants(submissions);
+    }
     else if (searchTerm) {
-      const filtered = submissionsWithDistance.filter((restaurant) =>
+      let filtered;
+      if(isDistanceAvailable) {
+        filtered = submissionsWithDistance.filter((restaurant) =>
         restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         restaurant.restaurantAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
         restaurant.discount.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === ''
       );
+      }
+      else {
+        filtered = submissions.filter((restaurant) =>
+        restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        restaurant.restaurantAddress.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        restaurant.discount.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === ''
+      );
+      
+      }
       const sortedByDistance = filtered.sort((a, b) => parseFloat(a.distanceFromUser) - parseFloat(b.distanceFromUser));
       setFilteredRestaurants(sortedByDistance);
+      
     }
   }, [searchTerm, submissions]);
   
@@ -181,13 +190,13 @@ export default function Index() {
           If you're aware of any restaurants in the area that give discounts to students not currently listed below,
           please <a className="text-blue-500 underline hover:text-blue-700" onClick={handleOpenModal}>click here</a>.
         </p>
-        <div className="mb-4 flex justify-center responsive-search">
+        <div className="mb-4  flex justify-center responsive-search">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search..."
-            className="border-2 p-2 w-3/4 max-w-lg text-black"
+            className="border-2 p-2 w-3/5 max-w-lg text-black"
           />
         </div>
         {!isDistanceAvailable && (
@@ -222,12 +231,12 @@ export default function Index() {
             </thead>
             <tbody className="bg-grey-light w-full">
               {filteredRestaurants.map((restaurant) => (
-                <tr key={restaurant.id} className="bg-gray-500">
-                  <td className="p-4 text-center">{restaurant.restaurantName}</td>
-                  <td className="p-4 text-center">{restaurant.restaurantAddress}</td>
-                  <td className="p-4 text-center">{restaurant.discount}</td>
+                <tr key={restaurant.id} className="bg-gray-600">
+                  <td className="p-4 text-center font-extrabold">{restaurant.restaurantName}</td>
+                  <td className="p-4 text-center font-extrabold">{restaurant.restaurantAddress}</td>
+                  <td className="p-4 text-center font-extrabold">{restaurant.discount}</td>
                   {isDistanceAvailable && (
-                    <td className="p-4 text-center">{restaurant.distanceFromUser} miles away</td>
+                    <td className="p-4 text-center font-extrabold">{restaurant.distanceFromUser} miles away</td>
                   )}
                 </tr>
               ))}

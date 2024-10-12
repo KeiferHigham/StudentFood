@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import fetch from 'node-fetch';
 
 const prisma = new PrismaClient();
-const GOOGLE_PLACES_API_KEY = 'AIzaSyCadEijvqVc7ZCAAMAx4QCGndlrVm4oKfM';
+const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 const location = '40.2338,-111.6585';
 const radius = 24140; 
 const maxRequests = 100;

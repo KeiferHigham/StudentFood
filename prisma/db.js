@@ -7,6 +7,31 @@ export const getDiscounts = async () => {
   return await prisma.discount.findMany();
 };
 
+export const getNearbyRestaurants = async () => {
+  try {
+    return await prisma.nearbyRestaurants.findMany();
+  } catch (error) {
+    console.error('Error fetching nearby restaurants:', error);
+    throw new Error('Could not fetch nearby restaurantssss');
+  }
+};
+
+/**
+ * Fetch all verified submissions from the database.
+ */
+export const getVerifiedSubmissions = async () => {
+  try {
+    return await prisma.submissions.findMany({
+      where: {
+        verified: true,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching verified submissions:', error);
+    throw new Error('Could not fetch verified submissions');
+  }
+};
+
 export const submitDiscount = async (restaurantName, restaurantAddress, discount, lat, lng) => {
   const latitude = parseFloat(lat);
   const longitude = parseFloat(lng);
