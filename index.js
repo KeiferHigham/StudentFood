@@ -78,7 +78,7 @@ export async function updateRestaurants() {
   }
 
   // Clear existing data in the database
-  await prisma.NearbyRestaurants.deleteMany({});
+  await prisma.nearbyRestaurants.deleteMany({});
 
   const uniqueRestaurants = Array.from(
     new Map(
@@ -89,7 +89,7 @@ export async function updateRestaurants() {
     ).values()
   );
   // Insert new data into the database
-  await prisma.NearbyRestaurants.createMany({
+  await prisma.nearbyRestaurants.createMany({
     data: uniqueRestaurants
   });
 

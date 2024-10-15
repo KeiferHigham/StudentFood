@@ -55,7 +55,7 @@ function getUserLocationAndUpdateRestaurants(submissions) {
 }
 
 export const loader = async () => {
- const nearbyRestaurants = [] // await getNearbyRestaurants();
+ const nearbyRestaurants = await getNearbyRestaurants();
   const submissions = await getVerifiedSubmissions();
 
   return json({ nearbyRestaurants, submissions });
