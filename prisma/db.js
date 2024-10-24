@@ -37,7 +37,7 @@ export const submitDiscount = async (restaurantName, restaurantAddress, discount
   const longitude = parseFloat(lng);
 
   console.log("latitude is " + latitude);
-  console.log("longitude is " + longitude);
+  console.log("longitudeeee is " + longitude);
   
   const existingSubmission = await prisma.submissions.findFirst({
     where: {
