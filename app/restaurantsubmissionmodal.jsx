@@ -3,11 +3,11 @@ import {
   useSubmit,
 } from '@remix-run/react';
 
-const GOOGLE_GEOCODING_API_KEY = 'AIzaSyB4hQR-xVc5ZnNB9uNv_YEYHlLB8P_LUHs';
 
 async function getCoordinates(address) {
   const encodedAddress = encodeURIComponent(address);
-  const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${GOOGLE_GEOCODING_API_KEY}`;
+  const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+  console.log(apiUrl);
 
   const response = await fetch(apiUrl);
   const data = await response.json();
