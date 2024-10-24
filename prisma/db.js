@@ -62,11 +62,9 @@ export const getVerifiedSubmissions = async () => {
 
 
 
-export const submitDiscount = async (restaurantName, restaurantAddress, discount, lat, lng) => {
+export const submitDiscount = async (restaurantName, restaurantAddress, discount) => {
     const coordinates =  await getCoordinates(restaurantAddress);
     console.log("coordinates are " + coordinates.latitude);
-    formData.append("latitude", coordinates.latitude);
-    formData.append("longitude",coordinates.longitude);
     const latitude = parseFloat(coordinates.latitude);
     const longitude = parseFloat(coordinates.longitude);
 
