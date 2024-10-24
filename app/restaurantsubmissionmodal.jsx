@@ -3,34 +3,6 @@ import {
   useSubmit,
 } from '@remix-run/react';
 
-
-async function getCoordinates(address) {
-  const encodedAddress = encodeURIComponent(address);
-  const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
-  console.log(apiUrl);
-
-  const response = await fetch(apiUrl);
-  const data = await response.json();
-  console.log(data);
-
-  if (data.status === 'OK') {
-    const location = data.results[0].geometry.location;
-    return {
-      valid: true,
-      latitude: location.lat,
-      longitude: location.lng,
-      formattedAddress: data.results[0].formatted_address,
-    };
-  } else {
-    return {
-      valid: false,
-      latitude: 0.0,
-      longitude: 0.0,
-      formattedAddress: address,
-    };
-  }
-}
-
 export default function Modal({ isOpen, onClose, nearbyRestaurants, submissions }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
@@ -90,12 +62,6 @@ export default function Modal({ isOpen, onClose, nearbyRestaurants, submissions 
       formData.append("restaurantName", restaurantName);
       formData.append("restaurantAddress",restaurantAddress);
       formData.append("discount",discount);
-      const coordinates =  await getCoordinates(restaurantAddress);
-    console.log("coordinates are " + coordinates.latitude);
-      formData.append("latitude", coordinates.latitude);
-      formData.append("longitude",coordinates.longitude);
-      console.log(latitude);
-      console.log(longitude);
       submitForm(formData, { method: "post" });
       onClose();
     }

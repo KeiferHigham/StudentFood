@@ -66,10 +66,8 @@ export const action = async ({ request }) => {
   const restaurantName = formData.get('restaurantName');
   const restaurantAddress = formData.get('restaurantAddress');
   const discount = formData.get("discount");
-  const latitude = formData.get("latitude");
-  const longitude = formData.get("longitude");
   
-  const response = await submitDiscount(restaurantName, restaurantAddress, discount, latitude,longitude);
+  const response = await submitDiscount(restaurantName, restaurantAddress, discount);
 
   return json(response, { status: response.status === 'ok' ? 200 : 500 });
 };

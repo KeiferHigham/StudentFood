@@ -16,6 +16,34 @@ export const getNearbyRestaurants = async () => {
   }
 };
 
+
+const getCoordinates = async (address) => {
+  const encodedAddress = encodeURIComponent(address);
+  const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+  console.log(apiUrl);
+
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+  console.log(data);
+
+  if (data.status === 'OK') {
+    const location = data.results[0].geometry.location;
+    return {
+      valid: true,
+      latitude: location.lat,
+      longitude: location.lng,
+      formattedAddress: data.results[0].formatted_address,
+    };
+  } else {
+    return {
+      valid: false,
+      latitude: 0.0,
+      longitude: 0.0,
+      formattedAddress: address,
+    };
+  }
+}
+
 /**
  * Fetch all verified submissions from the database.
  */
@@ -32,9 +60,15 @@ export const getVerifiedSubmissions = async () => {
   }
 };
 
+
+
 export const submitDiscount = async (restaurantName, restaurantAddress, discount, lat, lng) => {
-  const latitude = parseFloat(lat);
-  const longitude = parseFloat(lng);
+    const coordinates =  await getCoordinates(restaurantAddress);
+    console.log("coordinates are " + coordinates.latitude);
+    formData.append("latitude", coordinates.latitude);
+    formData.append("longitude",coordinates.longitude);
+    const latitude = parseFloat(coordinates.latitude);
+    const longitude = parseFloat(coordinates.longitude);
 
   console.log("latitude is " + latitude);
   console.log("longitudeeee is " + longitude);
