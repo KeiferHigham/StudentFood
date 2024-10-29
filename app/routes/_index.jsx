@@ -203,7 +203,7 @@ export default function Index() {
           </p>
         )}
         <div className="w-full flex justify-center">
-        <div className="w-3/4 flex justify-center">
+        <div className="w-full md:w-3/4 flex justify-center">
           <table className="text-left w-full max-w-5xl rounded-lg overflow-hidden responsive-table">
             <thead className="bg-black text-white">
               <tr>

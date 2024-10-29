@@ -5,40 +5,47 @@
 @media (max-width: 700px) {
     .responsive-table {
       font-size: 13px; /* Adjust the font size as needed */
+      width: 90%;
     }
   }
 
   @media (max-width: 650px) {
     .responsive-table {
       font-size: 12px; /* Adjust the font size as needed */
+      width: 90%;
     }
   }
 
   @media (max-width: 600px) {
     .responsive-table {
       font-size: 11px; /* Adjust the font size as needed */
+      width: 90%;
     }
   }
   
   @media (max-width: 550px) {
     .responsive-table {
       font-size: 10px; /* Changes font size to 6 points */
+      width: 90%;
     }
   }
 
   @media (max-width: 500px) {
     .responsive-table {
       font-size: 9px; /* Changes font size to 6 points */
+      width: 90%;
     }
   }
   @media (max-width: 450px) {
     .responsive-table {
       font-size: 8px; /* Changes font size to 6 points */
+      width: 90%;
     }
   }
   @media (max-width: 400px) {
     .responsive-table {
       font-size: 7px; /* Changes font size to 6 points */
+      width: 90%;
     }
   }
 
@@ -47,8 +54,3 @@
     padding: 8px; /* Adds some padding inside the cells */
     text-align: center; /* Centers text within the cells */
   }
-
-
-  
-
-
